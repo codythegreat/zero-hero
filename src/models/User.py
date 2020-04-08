@@ -52,6 +52,7 @@ class User:
     def __str__(self):
         return f"{self.fname} {self.lname} - {self.email}"
 
+    # returns an integer of the user's UUID
     def getIDasInt(self):
         return self._id.int
 
