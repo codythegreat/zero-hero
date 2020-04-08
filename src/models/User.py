@@ -6,6 +6,8 @@ import random
 import pathlib
 # used to generate JSON file
 import json
+# used to generate a time stamp for user creation
+from datetime import datetime
 # for listing files in readUsers function
 from os import listdir
 
@@ -34,20 +36,25 @@ class User:
         self.fname = f
         self.lname = l
         self.email = e
+        self.creation_date = datetime.now()
 
         # if user is active, they'll appear selectable in app
         self.active = True
     
-
-    def __repr__(self):
-        return str({
+    # returns a dictionary representation of self
+    def asDict(self):
+        return {
             'id': self.getIDasInt(),
             'user_file': self.user_file,
             'transactions_file': self.transactions_file,
             'fname': self.fname,
             'lname': self.lname,
             'email': self.email,
-            'active': True})
+            'creation_date': self.creation_date.strftime("%m/%d/%Y, %H:%M:%S"),
+            'active': self.active }
+
+    def __repr__(self):
+        return str(self.asDict())
     
     def __str__(self):
         return f"{self.fname} {self.lname} - {self.email}"
@@ -59,7 +66,7 @@ class User:
     # generates a unique user file
     def generate_user_file(self):
         with open(DATA_DIR + self.user_file, 'w') as outfile:
-            json.dump(repr(self), outfile)
+            json.dump(self.asDict(), outfile)
     
     # generates a unique CSV file that holds transaction detials
     def generate_transactions_file(self):
@@ -77,7 +84,7 @@ def readUsers():
             with open(DATA_DIR + f, 'r') as data:
                 userData = json.load(data)
                 users.append(userData)
-    
+
     return users
 
 s = User('Cody', 'Maxie', 'maxiecody@gmail.com')
