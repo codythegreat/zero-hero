@@ -6,6 +6,8 @@ import random
 import pathlib
 # used to generate JSON file
 import json
+# for listing files in readUsers function
+from os import listdir
 
 # directory to data files
 DATA_DIR = pathlib.Path(__file__).parent.parent.parent.absolute().as_posix() + '/data/'
@@ -62,5 +64,21 @@ class User:
     def generate_transactions_file(self):
         pass
 
+
+# returns a list of users
+def readUsers():
+    # holds list of users and their corresponding data
+    users = []
+
+    # append each .json file's data to users list
+    for f in listdir(DATA_DIR):
+        if f.endswith('.json'):
+            with open(DATA_DIR + f, 'r') as data:
+                userData = json.load(data)
+                users.append(userData)
+    
+    return users
+
 s = User('Cody', 'Maxie', 'maxiecody@gmail.com')
 s.generate_user_file()
+readUsers()
