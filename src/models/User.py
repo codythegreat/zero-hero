@@ -86,7 +86,3 @@ def readUsers():
                 users.append(userData)
 
     return users
-
-s = User('Cody', 'Maxie', 'maxiecody@gmail.com')
-s.generate_user_file()
-readUsers()
