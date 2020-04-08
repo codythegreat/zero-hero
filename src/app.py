@@ -25,4 +25,11 @@ while True:
     # handle new user creation
     elif (event == 'Create'):
         pass
+    # on 'None' exit
+    elif event is None:
+        break
+
+    # log event and values to console for debugging
     print(event, ' -- ', values)
+
+window.close()
