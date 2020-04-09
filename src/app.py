@@ -4,6 +4,9 @@ import PySimpleGUI as sg
 import models.User as User
 import models.Transaction as Transaction
 
+# dash view import
+import dash
+
 # Layout allows selection of existing user or new user
 layout = []
 
@@ -38,7 +41,8 @@ while True:
         user = User.User(values.get('fname'), values.get('lname'), values.get('email'))
         user.generate_user_file()
         user.generate_transactions_file()
-        pass
+        window.close()
+        dash.dash(user.asDict())
     # on 'None' exit
     elif event is None:
         break
@@ -47,7 +51,9 @@ while True:
     else:
         for user in users:
             if user.get('id') == event:
+                window.close()
                 print(f"{user.get('fname')} {user.get('lname')}")
+                dash.dash(user)
         #TODO: go to transactions screen
 
 
