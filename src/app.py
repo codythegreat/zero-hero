@@ -53,7 +53,11 @@ while __name__ == "__main__":
 
         # add a new user and go to dash if filled
         if not unfilled:
-            user = User.User(values.get('fname'), values.get('lname'), values.get('email'))
+            user = User.User(
+                values.get('fname').strip().capitalize(),
+                values.get('lname').strip().capitalize(),
+                values.get('email')
+            )
             user.generate_user_file()
             user.generate_transactions_file()
             window.close()
