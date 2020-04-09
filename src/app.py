@@ -7,42 +7,62 @@ import models.Transaction as Transaction
 # dash view import
 import dash
 
-# Layout allows selection of existing user or new user
-layout = []
+# create PySimpleGUI layout for user selection
+def createUserSelect(users):
+    layout = []
+    for user in users:
+        layout.append([sg.Text(f"{user.get('fname', '')} {user.get('lname', '')} - {user.get('email', '')}")])
+        layout.append([sg.Button('Select', key=user.get('id'))])
+    return layout
 
-# get list of users and append to start of layout for selection
-users = User.readUsers()
-for user in users:
-    layout.append([sg.Text(f"{user.get('fname', '')} {user.get('lname', '')} - {user.get('email', '')}")])
-    layout.append([sg.Button('Select', key=user.get('id'))])
+# create PySimpleGUI layout for user creation form
+def createNewUserForm():
+    return [
+        [sg.Text('Create a new user:')],
+        [sg.Text('First Name')],
+        [sg.InputText(key='fname')],
+        [sg.Text('Last Name')],
+        [sg.InputText(key='lname')],
+        [sg.Text('Email')],
+        [sg.InputText(key='email')],
+        [sg.Button('Create')]
+    ]
 
-# add user creation form to layout
-layout += [
-    [sg.Text('Create a new user:')],
-    [sg.Text('First Name')],
-    [sg.InputText(key='fname')],
-    [sg.Text('Last Name')],
-    [sg.InputText(key='lname')],
-    [sg.Text('Email')],
-    [sg.InputText(key='email')],
-    [sg.Button('Create')]
-]
+# combines user select and new user form layouts
+def createLayout(users):
+    return createUserSelect(users) + createNewUserForm()
 
-window = sg.Window('Zero Hero', layout)
+while __name__ == "__main__":
+    # get users for user selection
+    users = User.readUsers()
 
-while True:
+    # initialize the window
+    window = sg.Window('Zero Hero', createLayout(users))
+
+    # on button click, read event and values
     event, values = window.read()
-    # handle existing user selection
-    if (event == 'Select'):
-        pass
+
     # handle new user creation
-    elif (event == 'Create'):
-        # add a new user
-        user = User.User(values.get('fname'), values.get('lname'), values.get('email'))
-        user.generate_user_file()
-        user.generate_transactions_file()
-        window.close()
-        dash.dash(user.asDict())
+    if (event == 'Create'):
+
+        # make sure that all form inputs are filled
+        unfilled = False
+        for v in values.values():
+            if v == '':
+                unfilled = True
+
+        # add a new user and go to dash if filled
+        if not unfilled:
+            user = User.User(values.get('fname'), values.get('lname'), values.get('email'))
+            user.generate_user_file()
+            user.generate_transactions_file()
+            window.close()
+            dash.dash(user.asDict())
+
+        # close and reload window
+        else:
+            window.close()
+
     # on 'None' exit
     elif event is None:
         break
@@ -52,10 +72,7 @@ while True:
         for user in users:
             if user.get('id') == event:
                 window.close()
-                print(f"{user.get('fname')} {user.get('lname')}")
                 dash.dash(user)
-        #TODO: go to transactions screen
-
 
     # log event and values to console for debugging
     print(event, ' -- ', values)
