@@ -23,10 +23,10 @@ def CSVToListOfTransactions(filename):
 def createTransactionsTable(transactions):
     try:
         # add a header for the rows of transactions
-        layout = [[sg.Text('  ')] + [sg.Text(h, size=(14,1)) for h in transactions[0][1:]]] 
+        layout = [[sg.Text('  ')] + [sg.Text(h, size=(20,1)) for h in transactions[0][1:]]] 
         # add each row to the layout
         for t in transactions[1:]:
-            layout += [[sg.Text('  ')] + [sg.Text(c, size=(14,1)) for c in t[1:]]]
+            layout += [[sg.Text('  ')] + [sg.Text(c, size=(20,1)) for c in t[1:]]]
         return layout
     except:
         return []
