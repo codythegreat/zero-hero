@@ -19,14 +19,21 @@ def CSVToListOfTransactions(filename):
     except:
         return []
 
+def createTransactionButtonRow():
+    return [[sg.Button('Delete'), sg.Button('Edit')]]
+
 # create a pysimplegui table from transactions list
 def createTransactionsTable(transactions):
     try:
         # add a header for the rows of transactions
-        layout = [[sg.Text('  ')] + [sg.Text(h, size=(20,1)) for h in transactions[0][1:]]] 
-        # add each row to the layout
+        layout = [[sg.Text('Select', size=(20,1))] + [sg.Text(h, size=(20,1)) for h in transactions[0][1:]]] 
+
+        # add each row to the layout with checkbox to select
         for t in transactions[1:]:
-            layout += [[sg.Text('  ')] + [sg.Text(c, size=(20,1)) for c in t[1:]]]
+            layout += [[sg.Checkbox('', size=(17,1), key=t[0])]+[ sg.Text(c, size=(20,1)) for c in t[1:]]]
+
+        # add bottom row of table controls
+        layout += createTransactionButtonRow()
         return layout
     except:
         return []
@@ -87,6 +94,13 @@ def dash(user):
             # write transaction to file
             Transaction.writeTransactionToFile(user.get('transactions_file'), t)
             # close the window (create a new window on next loop)
+            window.close()
+
+        # on Delete, transaction will be removed from user's csv file
+        if (event == 'Delete'):
+            for k, v in values.items():
+                if v == True:
+                    Transaction.deleteTransactionFromFile(user.get('transactions_file',), k)
             window.close()
         
         # on Export, user selects folder for csv to be saved to
