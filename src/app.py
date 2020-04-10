@@ -62,6 +62,7 @@ while __name__ == "__main__":
             user.generate_transactions_file()
             window.close()
             dash.dash(user.asDict())
+            break
 
         # close and reload window
         else:
@@ -77,6 +78,8 @@ while __name__ == "__main__":
             if user.get('id') == event:
                 window.close()
                 dash.dash(user)
+                break
+        break
 
     # log event and values to console for debugging
     print(event, ' -- ', values)
