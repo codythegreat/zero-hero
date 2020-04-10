@@ -30,7 +30,10 @@ def createTransactionsTable(transactions):
 
         # add each row to the layout with checkbox to select
         for t in transactions[1:]:
-            layout += [[sg.Checkbox('', size=(17,1), key=t[0])]+[ sg.Text(c, size=(20,1)) for c in t[1:]]]
+            layout += [
+                [sg.Checkbox('', size=(17,1), key=t[0])] +
+                [sg.Text(c, size=(20,1)) for c in t[1:]]
+            ]
 
         # add bottom row of table controls
         layout += createTransactionButtonRow()
@@ -64,10 +67,13 @@ def createLayout(user):
     # if transactions exist, add them to an iterable list
     transactions = CSVToListOfTransactions(user.get('transactions_file'))
 
-    # add transaction statistics to layout
-    sum = Transaction.sumListOfTransactions(transactions[1:])
+    # Get the sum of all transactions to 2 decimal places
+    sum = format(Transaction.sumListOfTransactions(transactions[1:]), '.2f')
+    # Get count of transactions
+    count = len(transactions[1:])
+    # Add transaction statistics to layout
     layout += [
-        [sg.Text(f"You have ${sum} to allocate. You've created {len(transactions[1:])} transactions.")]
+        [sg.Text(f"You have ${sum} to allocate. You've created {count} transactions.")]
     ]
 
     # add a header for the rows of transactions
