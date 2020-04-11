@@ -20,7 +20,12 @@ def CSVToListOfTransactions(filename):
         return []
 
 def createTransactionButtonRow():
-    return [[sg.Button('Delete'), sg.Button('Edit')]]
+    return [
+        [
+            sg.Button('Delete'),
+            sg.Button('Edit') 
+        ]
+    ]
 
 # create a pysimplegui table from transactions list
 def createTransactionsTable(transactions):
@@ -84,6 +89,59 @@ def createLayout(user):
 
     return layout
 
+def handleEventAndValues(event, values, window, user):
+
+    userFile = user.get('transactions_file')
+
+    # on Add, create new transaction from form, save to CSV file, refresh window
+    if (event == 'Add'):
+        # create a new transaction
+        t = Transaction.Transaction(values.get('title'), values.get('description'), values.get('amount'), values.get('date'))
+        # write transaction to file
+        Transaction.writeTransactionToFile(userFile, t)
+
+    # on Delete, transaction will be removed from user's csv file
+    if (event == 'Delete'):
+        for k, v in values.items():
+            if v == True:
+                Transaction.deleteTransactionFromFile(userFile, k)
+
+    # on Edit, fill form inputs with transaction details
+    if (event == 'Edit'):
+        for k, v in values.items():
+            if v == True:
+                # Get the transaction's values
+                t = Transaction.retrieveTransactionFromFile(userFile, k)
+                # update from inputs with transaction's values
+                window['title'].update(t.get('title'))
+                window['description'].update(t.get('description'))
+                window['amount'].update(t.get('amount'))
+                window['date'].update(t.get('date'))
+                window['Add'].update('Update')
+
+                # reread event and values for Update event
+                event, values = window.read()
+                handleEventAndValues(event, values, window, user)
+    
+    if (event == 'Update'):
+        for k, v in values.items():
+            if v == True:
+                Transaction.deleteTransactionFromFile(userFile, k)
+                t = Transaction.Transaction(values.get('title'), values.get('description'), values.get('amount'), values.get('date'))
+                # write transaction to file
+                Transaction.writeTransactionToFile(userFile, t)
+                return
+
+    # on Save, user selects folder for csv to be saved to
+    if (event == 'Save'):
+        pass
+
+    # on exit, exit loop where window will close
+    if event is None:
+        return 1
+
+
+
 def dash(user):
     # loop until event, and handle event
     while True:
@@ -93,32 +151,15 @@ def dash(user):
         # on button click, read event and values
         event, values = window.read()
 
-        # on Add, create new transaction from form, save to CSV file, refresh window
-        if (event == 'Add'):
-            # create a new transaction
-            t = Transaction.Transaction(values.get('title'), values.get('description'), values.get('amount'), values.get('date'))
-            # write transaction to file
-            Transaction.writeTransactionToFile(user.get('transactions_file'), t)
-            # close the window (create a new window on next loop)
-            window.close()
-
-        # on Delete, transaction will be removed from user's csv file
-        if (event == 'Delete'):
-            for k, v in values.items():
-                if v == True:
-                    Transaction.deleteTransactionFromFile(user.get('transactions_file',), k)
-            window.close()
-        
-        # on Export, user selects folder for csv to be saved to
-        if (event == 'Export'):
-            pass
-
-        # on exit, exit loop where window will close
-        if event is None:
+        # execute appropriate code based on event and values
+        # if return value is 1 (exit button) break
+        if handleEventAndValues(event, values, window, user):
             break
         
         # for debugging, print the current event and values
         print(event, ' -- ', values)
+
+        window.close()
 
     # close the window and exit program
     window.close()
