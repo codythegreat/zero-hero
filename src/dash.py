@@ -58,7 +58,7 @@ def createTransactionForm():
         [sg.InputText(key='description')],
         [sg.Text('Date')],
         [sg.InputText(key='date')],
-        [sg.Button('Add')]
+        [sg.Button('Add'), sg.Button('Update', visible=False)]
     ]
 
 # creates layout with greeting, transactions, and form
@@ -117,11 +117,16 @@ def handleEventAndValues(event, values, window, user):
                 window['description'].update(t.get('description'))
                 window['amount'].update(t.get('amount'))
                 window['date'].update(t.get('date'))
-                window['Add'].update('Update')
+
+                # make update button visible and add invisible
+                window['Update'].update(visible=True)
+                window['Add'].update(visible=False)
 
                 # reread event and values for Update event
                 event, values = window.read()
-                handleEventAndValues(event, values, window, user)
+
+                # return when finished so transactions are reset
+                return handleEventAndValues(event, values, window, user)
     
     if (event == 'Update'):
         for k, v in values.items():
