@@ -65,15 +65,29 @@ def writeTransactionToFile(filename, transaction):
         csvWriter.writerow(transaction.asDict())
 
 # delete a specific transaction from a given file
-def deleteTransactionFromFile(filename, transaction):
+def deleteTransactionFromFile(filename, transactionID):
     with open(DATA_DIR + filename, "r") as f:
         data = list(csv.reader(f))
 
     with open(DATA_DIR + filename, "w") as f:
         writer = csv.writer(f)
         for row in data:
-            if row[0] != transaction:
+            if row[0] != transactionID:
                 writer.writerow(row)
+
+def retrieveTransactionFromFile(filename, transactionID):
+    with open(DATA_DIR + filename, 'r') as f:
+        data = list(csv.reader(f))
+        for row in data:
+            if row[0] == transactionID:
+                return {
+                    'id': row[0],
+                    'title': row[1],
+                    'description': row[2],
+                    'amount': row[3],
+                    'date': row[4],
+                }
+
 
 # takes a list of transactions and returns sum of 4th col (amt)
 def sumListOfTransactions(transactions):
