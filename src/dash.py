@@ -56,8 +56,7 @@ def createTransactionForm():
         [sg.InputText(key='title')],
         [sg.Text('Description')],
         [sg.InputText(key='description')],
-        [sg.Text('Date')],
-        [sg.InputText(key='date')],
+        [sg.CalendarButton('Date', key='date')],
         [sg.Button('Add'), sg.Button('Update', visible=False)]
     ]
 
@@ -116,7 +115,6 @@ def handleEventAndValues(event, values, window, user):
                 window['title'].update(t.get('title'))
                 window['description'].update(t.get('description'))
                 window['amount'].update(t.get('amount'))
-                window['date'].update(t.get('date'))
 
                 # make update button visible and add invisible
                 window['Update'].update(visible=True)
