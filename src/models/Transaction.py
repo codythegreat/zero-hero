@@ -21,7 +21,7 @@ class Transaction:
 
         # create date from string
         try:
-            self.date = datetime.strptime(date, '%m/%d/%y %H:%M:%S')
+            self.date = date
         except ValueError:
             self.date = datetime.now()
 
@@ -32,7 +32,7 @@ class Transaction:
             'title': self.title,
             'description': self.description,
             'amount': self.amount,
-            'date': self.date.strftime("%m/%d/%Y, %H:%M:%S")
+            'date': self.date.strftime("%m/%d/%Y")
         }
 
     def __repr__(self):
