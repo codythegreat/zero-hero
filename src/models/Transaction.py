@@ -20,10 +20,10 @@ class Transaction:
         self.amount = amt
 
         # create date from string
-        try:
-            self.date = date
-        except ValueError:
+        if date is None:
             self.date = datetime.now()
+        else:
+            self.date = date
 
     # return a representation of the instance as dictionary 
     def asDict(self):
